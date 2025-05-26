@@ -159,10 +159,6 @@ void FCFS(Process processes[], int process_num){
     int executed_time[MAX_PROCESSES] = {0};
     int io_index[MAX_PROCESSES] = {0}; //실행시켜야 할 io
     int remaining_io_time[MAX_PROCESSES] = {0}; //남은 io 시간
-    int start_time[MAX_PROCESSES];
-    for (int i =0;i<MAX_PROCESSES; i++){
-        start_time[i]=-1;
-    }
     int completion_time[MAX_PROCESSES];
     int gantt_chart[1000];
     
@@ -192,9 +188,6 @@ void FCFS(Process processes[], int process_num){
 
         if(running==-1 && !IsEmpty(&ready_queue)){
             running=Dequeue(&ready_queue);
-            if(start_time[running]==-1){
-                start_time[running]=current_time;
-            }
         }
         if(running!=-1){
             gantt_chart[current_time]=processes[running].pid;
@@ -217,22 +210,6 @@ void FCFS(Process processes[], int process_num){
         }
         current_time++;
     }
-    float total_wait = 0, total_turnaround = 0;
-
-    for (int i = 0; i < process_num; i++) {
-        int turnaround = completion_time[i] - processes[i].arrival_time;
-        int waiting = turnaround - processes[i].cpu_burst_time;
-        printf("PID %d | Arrival %2d | Start %2d | Complete %2d | Waiting %2d | Turnaround %2d\n",
-               processes[i].pid,
-               processes[i].arrival_time,
-               start_time[i],
-               completion_time[i],
-               waiting,
-               turnaround);
-        total_wait += waiting;
-        total_turnaround += turnaround;
-    }
-
     printf("\n< FCFS 결과 >\n");
     Evaluation(processes, completion_time, process_num,0);
     Print_Gantt_Chart(gantt_chart, current_time);
@@ -245,10 +222,6 @@ void RR(Process processes[], int process_num){
     int executed_time[MAX_PROCESSES] = {0};
     int io_index[MAX_PROCESSES] = {0};
     int remaining_io_time[MAX_PROCESSES] = {0};
-    int start_time[MAX_PROCESSES];
-    for (int i =0;i<MAX_PROCESSES; i++){
-        start_time[i]=-1;
-    }
     int completion_time[MAX_PROCESSES];
     int gantt_chart[1000];
     
@@ -279,9 +252,6 @@ void RR(Process processes[], int process_num){
         if(running==-1 && !IsEmpty(&ready_queue)){
             running=Dequeue(&ready_queue);
             quantum_used[running]=0;
-            if(start_time[running]==-1){
-                start_time[running]=current_time;
-            }
         }
         if(running!=-1){
             gantt_chart[current_time]=processes[running].pid;
@@ -347,10 +317,6 @@ void SJF(Process processes[], int process_num){
     int executed_time[MAX_PROCESSES] = {0};
     int io_index[MAX_PROCESSES] = {0};
     int remaining_io_time[MAX_PROCESSES] = {0};
-    int start_time[MAX_PROCESSES];
-    for (int i =0;i<MAX_PROCESSES; i++){
-        start_time[i]=-1;
-    }
     int completion_time[MAX_PROCESSES];
     int gantt_chart[1000];
     
@@ -378,9 +344,6 @@ void SJF(Process processes[], int process_num){
 
         if(running==-1 && !IsEmpty(&ready_queue)){
             running=Dequeue_shortest(processes,&ready_queue);
-            if(start_time[running]==-1){
-                start_time[running]=current_time;
-            }
         }
         if(running!=-1){
             gantt_chart[current_time]=processes[running].pid;
@@ -440,10 +403,6 @@ void Priority(Process processes[], int process_num){
     int executed_time[MAX_PROCESSES] = {0};
     int io_index[MAX_PROCESSES] = {0};
     int remaining_io_time[MAX_PROCESSES] = {0};
-    int start_time[MAX_PROCESSES];
-    for (int i =0;i<MAX_PROCESSES; i++){
-        start_time[i]=-1;
-    }
     int completion_time[MAX_PROCESSES];
     int gantt_chart[1000];
     
@@ -471,9 +430,6 @@ void Priority(Process processes[], int process_num){
 
         if(running==-1 && !IsEmpty(&ready_queue)){
             running=Dequeue_highest_priority(processes,&ready_queue);
-            if(start_time[running]==-1){
-                start_time[running]=current_time;
-            }
         }
         if(running!=-1){
             gantt_chart[current_time]=processes[running].pid;
@@ -538,10 +494,6 @@ void Preemptive_SJF(Process processes[], int process_num){
     int executed_time[MAX_PROCESSES] = {0};
     int io_index[MAX_PROCESSES] = {0};
     int remaining_io_time[MAX_PROCESSES] = {0};
-    int start_time[MAX_PROCESSES];
-    for (int i =0;i<MAX_PROCESSES; i++){
-        start_time[i]=-1;
-    }
     int completion_time[MAX_PROCESSES];
     int gantt_chart[1000];
     
@@ -575,8 +527,6 @@ void Preemptive_SJF(Process processes[], int process_num){
 
         if (!IsEmpty(&ready_queue)) {
             running = Dequeue_shortest_remaining_time(processes, &ready_queue, executed_time);
-            if (start_time[running] == -1)
-                start_time[running] = current_time;
         }
 
         if(running!=-1){
@@ -611,10 +561,6 @@ void Preemptive_Priority(Process processes[], int process_num){
     int executed_time[MAX_PROCESSES] = {0};
     int io_index[MAX_PROCESSES] = {0};
     int remaining_io_time[MAX_PROCESSES] = {0};
-    int start_time[MAX_PROCESSES];
-    for (int i =0;i<MAX_PROCESSES; i++){
-        start_time[i]=-1;
-    }
     int completion_time[MAX_PROCESSES];
     int gantt_chart[1000];
     
@@ -648,9 +594,6 @@ void Preemptive_Priority(Process processes[], int process_num){
                         Enqueue(&ready_queue, running);
                 }
                 running = candidate;
-                if (start_time[running] == -1){
-                        start_time[running] = current_time;
-                }
             } else {
                 Enqueue(&ready_queue, candidate);
             }
