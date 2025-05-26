@@ -193,7 +193,7 @@ void FCFS(Process processes[], int process_num){
             gantt_chart[current_time]=processes[running].pid;
             executed_time[running]++;
             if ((io_index[running]<processes[running].io_count)&&(executed_time[running]==processes[running].io_events[io_index[running]].io_request_time)){
-                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time;
+                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time+1;
                 Enqueue(&waiting_queue,running);
                 io_index[running]++;
                 running=-1;
@@ -259,7 +259,7 @@ void RR(Process processes[], int process_num){
             quantum_used[running]++;
 
             if ((io_index[running]<processes[running].io_count)&&(executed_time[running]==processes[running].io_events[io_index[running]].io_request_time)){
-                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time;
+                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time+1;
                 Enqueue(&waiting_queue, running);
                 io_index[running]++;
                 running=-1;
@@ -349,7 +349,7 @@ void SJF(Process processes[], int process_num){
             gantt_chart[current_time]=processes[running].pid;
             executed_time[running]++;
             if ((io_index[running]<processes[running].io_count)&&(executed_time[running]==processes[running].io_events[io_index[running]].io_request_time)){
-                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time;
+                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time+1;
                 Enqueue(&waiting_queue, running);
                 io_index[running]++;
                 running=-1;
@@ -435,7 +435,7 @@ void Priority(Process processes[], int process_num){
             gantt_chart[current_time]=processes[running].pid;
             executed_time[running]++;
             if ((io_index[running]<processes[running].io_count)&&(executed_time[running]==processes[running].io_events[io_index[running]].io_request_time)){
-                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time;
+                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time+1;
                 Enqueue(&waiting_queue, running);
                 io_index[running]++;
                 running=-1;
@@ -519,21 +519,24 @@ void Preemptive_SJF(Process processes[], int process_num){
                 }
             }
 
-         // preemption 검사
-        if (running != -1) {
-            Enqueue(&ready_queue, running);
-            running = -1;
-        }
-
+        // Preemption check
         if (!IsEmpty(&ready_queue)) {
-            running = Dequeue_shortest_remaining_time(processes, &ready_queue, executed_time);
+            int candidate = Dequeue_shortest_remaining_time(processes, &ready_queue,executed_time);
+            if (running == -1 || processes[candidate].cpu_burst_time-executed_time[candidate] < processes[running].cpu_burst_time-executed_time[running]) {
+                if (running != -1){
+                        Enqueue(&ready_queue, running);
+                }
+                running = candidate;
+            } else {
+                Enqueue(&ready_queue, candidate);
+            }
         }
 
         if(running!=-1){
             gantt_chart[current_time]=processes[running].pid;
             executed_time[running]++;
             if ((io_index[running]<processes[running].io_count)&&(executed_time[running]==processes[running].io_events[io_index[running]].io_request_time)){
-                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time;
+                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time+1;
                 Enqueue(&waiting_queue, running);
                 io_index[running]++;
                 running=-1;
@@ -553,6 +556,7 @@ void Preemptive_SJF(Process processes[], int process_num){
     Evaluation(processes, completion_time, process_num,4);
     Print_Gantt_Chart(gantt_chart, current_time);
 }
+
 
 void Preemptive_Priority(Process processes[], int process_num){
     Queue ready_queue, waiting_queue;
@@ -602,7 +606,7 @@ void Preemptive_Priority(Process processes[], int process_num){
             gantt_chart[current_time]=processes[running].pid;
             executed_time[running]++;
             if ((io_index[running]<processes[running].io_count)&&(executed_time[running]==processes[running].io_events[io_index[running]].io_request_time)){
-                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time;
+                remaining_io_time[running]=processes[running].io_events[io_index[running]].io_busrt_time+1;
                 Enqueue(&waiting_queue, running);
                 io_index[running]++;
                 running=-1;
