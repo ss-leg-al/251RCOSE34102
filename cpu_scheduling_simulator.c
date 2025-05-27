@@ -86,7 +86,7 @@ void Create_Processes(Process processes[], int process_num){
                 j++;
             }
         }
-            // I/O 요청 시점 selection sort 오름차순으로 정리 
+            // io 오름차순으로 정리 
         for (int k = 0; k < processes[i].io_count - 1; k++) {
             for (int l = k + 1; l < processes[i].io_count; l++) {
                 if (processes[i].io_events[k].io_request_time > processes[i].io_events[l].io_request_time) {
